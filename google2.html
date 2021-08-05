@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="Search(event)">
+        <input id = "search" >
+        <input type="submit">
+    </form>
+    <div id="show"></div>
+</body>
+</html>
+<script type="text/javascript">
+
+function Search(e) {
+    e.preventDefault();
+    let query = document.getElementById("search").value;
+    fetch(`http://api.serpstack.com/search?access_key=923541a759746423b184f7a70e69f9db&query=${query}`,{
+            method:'GET',
+            headers:{
+                "Content-Type": "application/json",
+            },
+
+        })
+        .then(function (res) {
+            res.json().then(function (res) {
+                console.log("res",res);
+              localStorage.setItem("data",JSON.stringify(res));
+              var data = JSON.parse(localStorage.getItem("data"));
+
+                var results = data.organic_results;
+
+                results.forEach((el) => {
+                    showResults(el);
+                }) 
+                
+            
+                
+            })
+            
+        })
+        .catch(function (err) {
+            console.log("err:", err);
+        });
+
+}
+
+var data_div = document.getElementById("show");
+
+data_div.innerHTML = null;
+
+function showResults(el) {
+       
+    var div = document.createElement("div")
+    
+    var p_title = document.createElement("a");
+    
+    p_title.innerHTML = el.title;
+    
+    p_title.setAttribute("href", el.url);
+    
+    div.append(p_title)
+    
+    data_div.append(div);
+    
+    }
+
+
+</script>
